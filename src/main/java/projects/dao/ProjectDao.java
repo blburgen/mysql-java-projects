@@ -26,9 +26,15 @@ public class ProjectDao extends DaoBase{
 			+ "(?, ?, ?, ?, ?)";
 		// @formatter:on
 		
+		/*
+		 * obtains a connection
+		 */
 		try(Connection conn = DbConnection.getConnection()) {
 			startTransaction(conn);
 			
+			/*
+			 * transaction
+			 */
 			try(PreparedStatement stmt = conn.prepareStatement(sql)){
 				setParameter(stmt, 1, project.getProjectName(), String.class);
 				setParameter(stmt, 2, project.getEstimatedHours(), BigDecimal.class);
@@ -38,6 +44,9 @@ public class ProjectDao extends DaoBase{
 				
 				stmt.executeUpdate();
 				
+				/*
+				 * gets project Id then commits the transaction
+				 */
 				Integer projectId = getLastInsertId(conn, PROJECT_TABLE);
 				commitTransaction(conn);
 				

@@ -21,13 +21,16 @@ public class ProjectsApp {
 	);
 	// @formatter:on
 
+	/*
+	 * This is the main method.  This is the access point
+	 */
 	public static void main(String[] args) {
 		new ProjectsApp().processUserSelection();
 
 	} // main
 
 	/*
-	 * 
+	 * This method compares looks at the user's menu choice and calls needed methods.
 	 */
 	private void processUserSelection() {
 		boolean done = false;
@@ -58,7 +61,7 @@ public class ProjectsApp {
 	} // processUserSelection method
 
 	/*
-	 * 
+	 * This method get the new project information from the user and then calls ProjectService to add it to the tables
 	 */
 	private void createProject() {
 		String projectName = getStringInput("Enter the project name");
@@ -80,7 +83,7 @@ public class ProjectsApp {
 	} // createProjects method
 
 	/*
-	 * 
+	 * This method takes a string and changes it to a 2 decimal number
 	 */
 	private BigDecimal getDecimalInput(String prompt) {
 		String input = getStringInput(prompt);
@@ -97,7 +100,7 @@ public class ProjectsApp {
 	} // getDecimalInput method
 
 	/*
-	 * 
+	 * The method takes the users menu input and returns it to the processUserSelection method
 	 */
 	private int getUserSelection() {
 		printOperations();
@@ -108,7 +111,7 @@ public class ProjectsApp {
 	} // getUserSelection method
 
 	/*
-	 * 
+	 * This method prints out the menu
 	 */
 	private void printOperations() {
 		System.out.println("\nThese are the available sections. Press the Enter key to quit:");
@@ -118,7 +121,7 @@ public class ProjectsApp {
 	} // printOperations method
 
 	/*
-	 * 
+	 * This method takes a string and changes it to a integer
 	 */
 	private Integer getIntInput(String prompt) {
 		String input = getStringInput(prompt);
@@ -136,7 +139,7 @@ public class ProjectsApp {
 	} // getIntInput method
 
 	/*
-	 * 
+	 * This method takes a string method and returns it trimmed
 	 */
 	private String getStringInput(String prompt) {
 		System.out.print(prompt + ": ");
@@ -146,7 +149,7 @@ public class ProjectsApp {
 	} // getStringInput method
 
 	/*
-	 * 
+	 * This method exits the program
 	 */
 	private boolean exitMenu() {
 		System.out.println("Exiting the menu.");
