@@ -17,7 +17,8 @@ public class ProjectsApp {
 	// @formatter:off
 	// This is the list of menu options
 	private List<String> operations = List.of(
-		"1) Add a project"
+		"1) Add a project",
+		"2) List projects"
 	);
 	// @formatter:on
 
@@ -48,6 +49,10 @@ public class ProjectsApp {
 						createProject();
 						break;
 						
+					case 2:
+						listProjects();
+						break;
+						
 					default:
 						System.out.println("\n" + selection + " is not a valid selection. Try again.");
 						break;
@@ -59,6 +64,14 @@ public class ProjectsApp {
 		} // While loop
 
 	} // processUserSelection method
+
+	private void listProjects() {
+		List<Project> projects = projectService.fetchAllProjects();
+		
+		System.out.println("\nProjects:");
+		
+		projects.forEach(project -> System.out.println("  " + project.getProjectId() + ": " + project.getProjectName()));
+	}
 
 	/*
 	 * This method get the new project information from the user and then calls ProjectService to add it to the tables
