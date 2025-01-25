@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -110,20 +111,20 @@ public class ProjectDao extends DaoBase {
 					try (ResultSet rs = stmt.executeQuery()) {
 						if (rs.next()) {
 							project = extract(rs, Project.class);
-						}//if statement
-					}//try
-				}// try
+						} // if statement
+					} // try
+				} // try
 
 				if (Objects.nonNull(project)) {
 					project.getMaterials().addAll(fetchMaterialsForProject(conn, projectId));
 					project.getSteps().addAll(fetchStepsForProject(conn, projectId));
 					project.getCategories().addAll(fetchCategoriesForProject(conn, projectId));
-				}//if statement
-				
+				} // if statement
+
 				commitTransaction(conn);
-				
+
 				return Optional.ofNullable(project);
-				
+
 			} catch (Exception e) {
 				rollbackTransaction(conn);
 				throw new DbException(e);
@@ -131,10 +132,10 @@ public class ProjectDao extends DaoBase {
 
 		} catch (SQLException e) {
 			throw new DbException(e);
-		}//try catch
+		} // try catch
 	} // method
 
-	private List<Category> fetchCategoriesForProject(Connection conn, Integer projectId) throws SQLException{
+	private List<Category> fetchCategoriesForProject(Connection conn, Integer projectId) throws SQLException {
 		//@formatter:off
 		String sql = "" 
 			+ "SELECT c.* "
@@ -157,8 +158,8 @@ public class ProjectDao extends DaoBase {
 			}
 		}
 	}
-	
-	private List<Step> fetchStepsForProject(Connection conn, Integer projectId) throws SQLException{
+
+	private List<Step> fetchStepsForProject(Connection conn, Integer projectId) throws SQLException {
 		//@formatter:off
 		String sql = "" 
 			+ "SELECT s.* "
@@ -181,8 +182,8 @@ public class ProjectDao extends DaoBase {
 			}
 		}
 	}
-	
-	private List<Material> fetchMaterialsForProject(Connection conn, Integer projectId) throws SQLException{
+
+	private List<Material> fetchMaterialsForProject(Connection conn, Integer projectId) throws SQLException {
 		//@formatter:off
 		String sql = "" 
 			+ "SELECT m.* "
@@ -203,6 +204,85 @@ public class ProjectDao extends DaoBase {
 
 				return materials;
 			}
+		}
+	}
+
+	public boolean modifyProjectsDetails(Project project) {
+		//@formatter:off
+		String sql = ""
+			+ "UPDATE " + PROJECT_TABLE + " SET "
+			+ "project_name = ?, "
+			+ "estimated_hours = ?, "
+			+ "actual_hours = ?, "
+			+ "difficulty = ?, "
+			+ "notes = ? "
+			+ "WHERE project_id = ?";
+		//@formatter:on
+
+		try (Connection conn = DbConnection.getConnection()) {
+			startTransaction(conn);
+
+			try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+				setParameter(stmt, 1, project.getProjectName(), String.class);
+				setParameter(stmt, 2, project.getEstimatedHours(), BigDecimal.class);
+				setParameter(stmt, 3, project.getActualHours(), BigDecimal.class);
+				setParameter(stmt, 4, project.getDifficulty(), Integer.class);
+				setParameter(stmt, 5, project.getNotes(), String.class);
+				setParameter(stmt, 6, project.getProjectId(), Integer.class);
+
+				boolean modified = stmt.executeUpdate() == 1;
+				commitTransaction(conn);
+
+				return modified;
+
+			} catch (Exception e) {
+				rollbackTransaction(conn);
+				throw new DbException();
+			}
+
+		} catch (SQLException e) {
+			throw new DbException(e);
+		}
+	}
+
+	public boolean deleteProject(Integer projectId) {
+		String sql = "DELETE FROM " + PROJECT_TABLE + " WHERE project_id = ?";
+
+		try (Connection conn = DbConnection.getConnection()) {
+			startTransaction(conn);
+
+			try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+				setParameter(stmt, 1, projectId, Integer.class);
+
+				boolean deleted = stmt.executeUpdate() == 1;
+
+				commitTransaction(conn);
+				return deleted;
+			} catch (Exception e) {
+				rollbackTransaction(conn);
+				throw new DbException(e);
+			}
+		} catch (SQLException e) {
+			throw new DbException(e);
+		}
+	}
+
+	public void executeBatch(List<String> sqlBatch) {
+		try (Connection conn = DbConnection.getConnection()) {
+			startTransaction(conn);
+
+			try (Statement stmt = conn.createStatement()) {
+				for (String sql : sqlBatch) {
+					stmt.addBatch(sql);
+				}
+				stmt.executeBatch();
+				commitTransaction(conn);
+			} catch (Exception e) {
+				rollbackTransaction(conn);
+				throw new DbException(e);
+			}
+		} catch (SQLException e) {
+			throw new DbException(e);
 		}
 	}
 
