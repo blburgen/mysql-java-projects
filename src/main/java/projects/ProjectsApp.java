@@ -86,11 +86,18 @@ public class ProjectsApp {
 
 	} // processUserSelection method
 
+	/*
+	 * This method creates and populates the tables that are defined in project_data.sql and projects_schema.sql
+	 */
 	private void createTables() {
 		projectService.createAndPopulateTables();
 		System.out.println("\nTables created and populated!");
-	}
+	} // createTables method
 
+	/*
+	 * This method deletes a selected project from the list of project
+	 * if the current project is chosen then curProject is set to null
+	 */
 	private void deleteProject() {
 		listProjects();
 		
@@ -101,14 +108,17 @@ public class ProjectsApp {
 		
 		if(Objects.nonNull(curProject) && curProject.getProjectId().equals(projectId)) {
 			curProject = null;
-		}
-	}
+		} // if statement 
+	} // deleteProject method
 
+	/*
+	 * This method updates a project's column data in the projects table
+	 */
 	private void updateProjectDetails() {
 		if (Objects.isNull(curProject)) {
 			System.out.println("\nPlease select a project.");
 			return;
-		}
+		} // if statement
 		String projectName = getStringInput("Enter the project name [" + curProject.getProjectName() + "]");
 	    BigDecimal estimatedHours = getDecimalInput("Enter the estimated hours [" + curProject.getEstimatedHours() + "]");
 	    BigDecimal actualHours = getDecimalInput("Enter the actual hours + [" + curProject.getActualHours() + "]");
@@ -126,8 +136,11 @@ public class ProjectsApp {
 	    projectService.modifyProjectDetails(project);
 	    
 	    curProject = projectService.fetchProjectById(curProject.getProjectId());
-	}
-
+	} // updateProjectDetails method
+	
+	/*
+	 * This method allows the user to select a current project to work with
+	 */
 	private void selectProject() {
 		listProjects();
 		
@@ -139,16 +152,19 @@ public class ProjectsApp {
 		
 		if(curProject == null) {
 			System.out.println("Invalid project ID selected.");
-		}		
-	}
+		} // if statement		
+	} // selectProject method
 
+	/*
+	 * This method prints a list of projects and is used in other methods
+	 */
 	private void listProjects() {
 		List<Project> projects = projectService.fetchAllProjects();
 		
 		System.out.println("\nProjects:");
 		
 		projects.forEach(project -> System.out.println("  " + project.getProjectId() + ": " + project.getProjectName()));
-	}
+	} // listProjects method
 
 	/*
 	 * This method get the new project information from the user and then calls ProjectService to add it to the tables
