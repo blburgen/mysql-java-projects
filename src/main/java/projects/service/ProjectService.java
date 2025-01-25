@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import projects.dao.ProjectDao;
 import projects.entity.Project;
@@ -25,7 +26,12 @@ public class ProjectService {
 	}
 
 	public List<Project> fetchAllProjects() {
-		return projectDao.fetchAllProjects();
+		// @formatter:off
+		return projectDao.fetchAllProjects()
+			.stream()
+			.sorted((r1, r2) -> r1.getProjectId() - r2.getProjectId())
+			.collect(Collectors.toList());
+		// @formatter:on
 	}
 
 	public Project fetchProjectById(Integer projectId) {
